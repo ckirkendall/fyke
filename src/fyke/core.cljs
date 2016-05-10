@@ -11,7 +11,7 @@
 (defn create-node [type word cnt idx]
   #js{:name word
       :index idx
-      :radius (+ (/ cnt 100) 3)
+      :radius (int (* (js/Math.pow cnt .4) 1.5))
       :class (name type)})
 
 (defn add-node [data nodes [word sim type]]
@@ -51,10 +51,19 @@
   (* 600 (- 1 (.-sim link))))
 
 (defn init-graph []
-  (let [cnt (get-in data [:cnt :noun "alice"])
-        nodes #js[(create-node :noun "alice" cnt 0)]
+  (let [cnt1 (get-in data [:cnt :noun "hatter"])
+        cnt2 (get-in data [:cnt :noun "alice"])
+        cnt3 (get-in data [:cnt :noun "queen"])
+        nodes #js[(create-node :noun "hatter" cnt1 0)
+                  (create-node :noun "alice" cnt2 1)
+                  (create-node :noun "queen" cnt3 2)]
         links #js[]]
     (js/console.log (pr-str (:cnt data)))
-    (graph/init 1500 1200 nodes links (add-child data) distance-fn)))
+    (graph/init (.-innerWidth js/window)
+                (.-innerHeight js/window)
+                nodes
+                links
+                (add-child data)
+                distance-fn)))
 
 (init-graph)
